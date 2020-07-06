@@ -1,0 +1,44 @@
+<p>
+  Sorting Algorithms
+</p>
+<p>
+  Choose an algorithm and watch it sort an array. Choose array size, speed of
+  sort,
+</p>
+<div [ngSwitch]></div>
+<mat-list class="horizontal-list">
+  <mat-list-item>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="loadAlgorithm('SelectionSort')"
+    >
+      Selection Sort
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="loadAlgorithm('InsertionSort')"
+    >
+      Insertion Sort
+    </button>
+    <button mat-raised-button color="primary">Merge Sort</button>
+    <button mat-raised-button color="primary">Quick Sort</button>
+  </mat-list-item>
+  <button mat-raised-button color="primary" (click)="sort()">
+    Start Sort
+  </button>
+  <button mat-raised-button color="primary" (click)="generateRandomArray()">
+    Generate New Array
+  </button>
+</mat-list>
+
+<div class="">
+  <ul class="array">
+    <li
+      class="item"
+      *ngFor="let n of unsortedArray"
+      [ngStyle]="styleBackground(unsortedArray, n)"
+    ></li>
+  </ul>
+</div>

@@ -13,14 +13,22 @@ import {
   MatSidenavModule,
   MatIconModule,
   MatListModule,
+  MatInputModule,
+  MatSliderModule,
 } from "@angular/material";
 import { AppRoutingModule } from "./app-routing.module";
 import { SortingAlgorithmsComponent } from "./pages/sort/sort.component";
-import { SearchComponent } from './pages/search/search.component';
-import { HomeComponent } from './pages/home/home.component';
+import { SearchComponent } from "./pages/search/search.component";
+import { HomeComponent } from "./pages/home/home.component";
 
 @NgModule({
-  declarations: [AppComponent, MainNavComponent, SortingAlgorithmsComponent, SearchComponent, HomeComponent],
+  declarations: [
+    AppComponent,
+    MainNavComponent,
+    SortingAlgorithmsComponent,
+    SearchComponent,
+    HomeComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -30,6 +38,8 @@ import { HomeComponent } from './pages/home/home.component';
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatInputModule,
+    MatSliderModule,
     AppRoutingModule,
   ],
   providers: [],

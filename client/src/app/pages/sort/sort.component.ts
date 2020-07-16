@@ -25,15 +25,20 @@ export class SortingAlgorithmsComponent implements OnInit {
   currentIdxColor = "#3D1173";
   comparingIdxColor = "#FBEAE3";
 
+  // Adjustable Params
   arrayLength = 30;
+  sortSpeed = 30;
 
-  // Function? Could make it class of Algorithm
+  // Function reference
   selectedAlgorithm: any;
+  selectedAlgorithmName: String;
 
   constructor() {
     this.unsortedArray = Sort.generateRandomArray(this.arrayLength);
     this.scaledBarWidth = window.innerWidth * 0.7;
+    // Default to selection sort
     this.selectedAlgorithm = Sort.SelectionSort;
+    this.selectedAlgorithmName = "Selection Sort";
   }
 
   ngOnInit() {}
@@ -65,10 +70,22 @@ export class SortingAlgorithmsComponent implements OnInit {
       case "SelectionSort":
         console.log("SelectionSort Loaded");
         this.selectedAlgorithm = Sort.SelectionSort;
+        this.selectedAlgorithmName = "Selection Sort";
         break;
       case "InsertionSort":
         console.log("InsertionSort Loaded");
         this.selectedAlgorithm = Sort.InsertionSort;
+        this.selectedAlgorithmName = "Insertion Sort";
+        break;
+      case "MergeSort":
+        console.log("MergeSort Loaded");
+        this.selectedAlgorithm = Sort.MergeSort;
+        this.selectedAlgorithmName = "Merge Sort";
+        break;
+      case "QuickSort":
+        console.log("QuickSort Loaded");
+        this.selectedAlgorithm = Sort.QuickSort;
+        this.selectedAlgorithmName = "Quick Sort";
         break;
       default:
         console.log("Default switch");
@@ -94,7 +111,8 @@ export class SortingAlgorithmsComponent implements OnInit {
         this.comparingIdx = temp.value["j"];
         done = temp.done;
         console.log(temp.done);
-        await timer(10);
+        // Each animation frame will resolve every x ms
+        await timer(10 * this.sortSpeed);
       }
     })();
   }

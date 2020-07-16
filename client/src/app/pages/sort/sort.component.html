@@ -1,13 +1,14 @@
 <p>
-  Sorting Algorithms
+  Choose an algorithm and watch it sort an array with duplicate values. Choose
+  array size, speed of sort,
 </p>
-<p>
-  Choose an algorithm and watch it sort an array. Choose array size, speed of
-  sort,
-</p>
+<div>
+  <p>{{ this.selectedAlgorithmName }} Selected</p>
+</div>
 <div [ngSwitch]></div>
 <mat-list class="horizontal-list">
   <mat-list-item>
+    <p>Algorithms:</p>
     <button
       mat-raised-button
       color="primary"
@@ -22,15 +23,53 @@
     >
       Insertion Sort
     </button>
-    <button mat-raised-button color="primary">Merge Sort</button>
-    <button mat-raised-button color="primary">Quick Sort</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="loadAlgorithm('MergeSort')"
+    >
+      Merge Sort
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="loadAlgorithm('QuickSort')"
+    >
+      Quick Sort
+    </button>
   </mat-list-item>
-  <button mat-raised-button color="primary" (click)="sort()">
-    Start Sort
-  </button>
-  <button mat-raised-button color="primary" (click)="generateRandomArray()">
-    Generate New Array
-  </button>
+  <mat-list-item>
+    <p>Controls:</p>
+    <button mat-raised-button color="primary" (click)="sort()">
+      Start Sort
+    </button>
+    <button mat-raised-button color="primary" (click)="generateRandomArray()">
+      Generate New Array
+    </button>
+
+    <div class="control-container">
+      <p>Array Length</p>
+      <mat-slider
+        min="1"
+        max="100"
+        step="1"
+        tickInterval="20"
+        thumbLabel
+        [(value)]="arrayLength"
+      ></mat-slider>
+    </div>
+    <div class="control-container">
+      <p>Sorting Speed</p>
+      <mat-slider
+        min="1"
+        max="100"
+        step="1"
+        tickInterval="20"
+        thumbLabel
+        [(value)]="sortSpeed"
+      ></mat-slider>
+    </div>
+  </mat-list-item>
 </mat-list>
 
 <div class="">

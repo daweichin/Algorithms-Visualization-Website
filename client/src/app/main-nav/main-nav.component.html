@@ -9,6 +9,7 @@
   >
     <mat-toolbar color="primary">Menu</mat-toolbar>
     <mat-nav-list>
+      <a mat-list-item routerLink="">Home</a>
       <a mat-list-item routerLink="sort">Sorting Algorithms</a>
       <a mat-list-item routerLink="search">Search Algorithms</a>
     </mat-nav-list>
@@ -27,6 +28,8 @@
       <span>DC Algorithms Visualizer Website</span>
     </mat-toolbar>
     <!-- Add Content Here -->
-    <router-outlet></router-outlet>
+    <div class="main">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

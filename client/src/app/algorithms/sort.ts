@@ -57,8 +57,53 @@ function* InsertionSort(A: number[]) {
 }
 
 // O(NLOG(N)) Algorithms
-function MergeSort(A: number[]) {}
-function QuickSort(A: number[]) {}
+
+/**
+ * MergeSort
+ * @param Array
+ */
+function* MergeSort(A: number[]) {
+  if (A.length > 1) {
+    let half = Math.floor(A.length / 2);
+    // Splice used to change original array A
+    let B = A.splice(0, half);
+    let C = A.splice(half, A.length);
+    MergeSort(B);
+    MergeSort(C);
+    Merge(B, C, A);
+  }
+  console.log(A);
+  return A;
+}
+
+function Merge(B: number[], C: number[], A: number[]) {
+  let i = 0,
+    j = 0,
+    k = 0;
+  while (i < B.length - 1) {
+    if (B[i] < C[j]) {
+      A[k] = B[i];
+      i++;
+    } else {
+      A[k] = C[j];
+      j++;
+    }
+    k++;
+  }
+  // If we looped through all B array, then all of B is smaller than C and we copy C to the upper half
+  if ((i = B.length)) {
+    // Copy C to A
+    A.push(...C);
+  } else {
+    // Copy B to A
+    A.push(...B);
+  }
+}
+
+// Quicksort with Hoare partioning
+// Hoares partioning is faster but harder to implement
+// Lumuto is slower but easier to understand/implement
+function* QuickSort(A: number[]) {}
 
 // Helper Functions
 // Generating a random number of arrays based on a size n
@@ -71,4 +116,11 @@ function generateRandomArray(n: number) {
   return arr;
 }
 
-export { SelectionSort, InsertionSort, generateRandomArray, Swap };
+export {
+  SelectionSort,
+  InsertionSort,
+  generateRandomArray,
+  MergeSort,
+  QuickSort,
+  Swap,
+};

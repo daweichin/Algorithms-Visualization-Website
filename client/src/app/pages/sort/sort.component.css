@@ -1,17 +1,14 @@
-canvas {
-  border: 1px solid red;
-}
-
 .horizontal-list {
   display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .array {
   display: flex;
   list-style: none;
-  margin: 16px;
-  padding: 0 32px;
-  border: 1px solid black;
+  padding: 0;
+  margin: 16px 0;
 }
 
 .item {
@@ -27,4 +24,19 @@ canvas {
 
 .item .comparing {
   background: pink;
+}
+
+button {
+  margin: 0 4px;
+}
+
+.control-container > * {
+  padding: 0;
+  margin: 0;
+}
+
+.control-container > p {
+  position: absolute;
+  justify-self: center;
+  text-align: center;
 }

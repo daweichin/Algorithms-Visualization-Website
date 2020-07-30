@@ -22,11 +22,11 @@ export class SortingAlgorithmsComponent implements OnInit {
   currentIdx: number;
   comparingIdx: number;
 
-  currentIdxColor = "#3D1173";
-  comparingIdxColor = "#FBEAE3";
+  currentIdxColor = "green";
+  comparingIdxColor = "#FF4081";
 
   // Adjustable Params
-  arrayLength = 30;
+  arrayLength = 10;
   sortSpeed = 30;
 
   // Function reference
@@ -43,22 +43,20 @@ export class SortingAlgorithmsComponent implements OnInit {
 
   ngOnInit() {}
 
-  // Style the background depending on if the current
-  // index is the current one or the one we are comparing to
+  // Idea behind animation is to conditionally style each array element based on its index
   styleBackground(arr: number[], n: number): Object {
     let style = {
-      "height.px": n.valueOf() * 4,
+      "height.px": arr[n].valueOf() * 4,
       "width.px": this.scaledBarWidth,
     };
-    if (this.currentIdx === arr.indexOf(n)) {
+    if (this.currentIdx == n) {
       style["background-color"] = this.currentIdxColor;
-      console.log(style);
       return style;
-    } else if (this.comparingIdx === arr.indexOf(n)) {
+    } else if (this.comparingIdx == n) {
       style["background-color"] = this.comparingIdxColor;
       return style;
     } else {
-      style["background-color"] = "blue";
+      style["background-color"] = "#3F51B5";
       return style;
     }
   }
@@ -106,18 +104,40 @@ export class SortingAlgorithmsComponent implements OnInit {
       while (!done) {
         // visualization here
         let temp = stepper.next();
+        console.log("temp is" + temp);
+        if (temp.done) {
+          this.unsortedArray = temp.value["A"];
+          break;
+        }
         console.log(temp.value);
-        this.currentIdx = temp.value["i"];
-        this.comparingIdx = temp.value["j"];
+
+        // Render new array and indexs
+        // Generator function will either yield just an array or array and indices
+
+        if (temp.value.hasOwnProperty("array")) {
+          this.unsortedArray = temp.value["A"];
+        } else {
+          this.unsortedArray = temp.value["A"];
+          this.currentIdx = temp.value["i"];
+          this.comparingIdx = temp.value["j"];
+        }
+
         done = temp.done;
         console.log(temp.done);
         // Each animation frame will resolve every x ms
-        await timer(10 * this.sortSpeed);
+        await timer(1000 / this.sortSpeed);
       }
     })();
   }
 
+  mergeSort() {
+    let A = this.unsortedArray;
+    this.unsortedArray = Sort.MergeSort(A);
+  }
+
   generateRandomArray() {
     this.unsortedArray = Sort.generateRandomArray(this.arrayLength);
+    this.currentIdx = null;
+    this.comparingIdx = null;
   }
 }

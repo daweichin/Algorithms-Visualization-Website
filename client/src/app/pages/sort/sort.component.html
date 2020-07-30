@@ -1,6 +1,10 @@
 <p>
-  Choose an algorithm and watch it sort an array with duplicate values. Choose
-  array size, speed of sort,
+  Choose an algorithm and watch it sort an array with duplicate values. Generate
+  arrays of different sizes and change the sorting speed.
+</p>
+<p>
+  The current element being sorted is green and the elements being compared to
+  are pink.
 </p>
 <div>
   <p>{{ this.selectedAlgorithmName }} Selected</p>
@@ -23,11 +27,7 @@
     >
       Insertion Sort
     </button>
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="loadAlgorithm('MergeSort')"
-    >
+    <button mat-raised-button color="primary" (click)="mergeSort()">
       Merge Sort
     </button>
     <button
@@ -76,8 +76,8 @@
   <ul class="array">
     <li
       class="item"
-      *ngFor="let n of unsortedArray"
-      [ngStyle]="styleBackground(unsortedArray, n)"
+      *ngFor="let n of unsortedArray; let indexOfElement = index"
+      [ngStyle]="styleBackground(unsortedArray, indexOfElement)"
     ></li>
   </ul>
 </div>

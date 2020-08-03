@@ -136,33 +136,80 @@ function* Merge2(arr1, arr2) {
 // Quicksort with Hoare partioning
 // Hoares partioning is faster but harder to implement
 // Lumuto is slower but easier to understand/implement
-function* QuickSort(A: number[], left, right) {
-  if (A.length > 1) {
-    let s = HoarePartition(A);
-    QuickSort(A, 0, s - 1);
-    QuickSort(A, s + 1, A.length - 1);
+
+interface Steps {
+  A: number[];
+  currentIdx: number;
+  comparingIdx: number;
+}
+
+function* GenQuickSort(A: number[]) {
+  // const temp = [...A].sort((a, b) => a - b);
+  // console.log(temp, A);
+
+  // Sort the algorithm and return steps]
+  const results: Steps[] = [];
+
+  // Async/await for the quicksort to finish before yielding values
+  QuickSort(A, 0, A.length - 1, results);
+  console.log("QuickSort Complete", A);
+
+  while (results.length > 0) {
+    let a = results.shift();
+    yield a;
   }
 }
 
-function HoarePartition(A: number[]) {
-  let lo = 0,
-    p = A[lo],
+// Some implementation help from
+// https://humanwhocodes.com/blog/2012/11/27/computer-science-in-javascript-quicksort/
+
+function QuickSort(A: number[], lo, hi, results) {
+  console.log("New Quicksort", A, lo, hi);
+  console.log(JSON.stringify(results));
+  let s;
+  if (A.length > 1) {
+    s = HoarePartition(A, lo, hi, results);
+    if (lo < s - 1) {
+      QuickSort(A, lo, s - 1, results);
+    }
+    if (s < hi) {
+      QuickSort(A, s, hi, results);
+    }
+  }
+  return A;
+}
+
+function HoarePartition(A: number[], lo, hi, results) {
+  console.log("Partioning");
+  let p = A[Math.floor((lo + hi) / 2)],
     i = lo,
-    j = A.length - 1;
+    j = hi;
 
   // Move indexes towards each other until they meet
   while (i <= j) {
-    while (i < A.length - 1 && A[i] < p) {
+    while (A[i] < p) {
       i++;
+      const step: Steps = { A: A.slice(), currentIdx: i, comparingIdx: j };
+      results.push(step);
+      console.log(JSON.stringify(results));
     }
-    while (j > 0 && A[j] > p) {
+    while (A[j] > p) {
+      j--;
+      const step: Steps = { A: A, currentIdx: i, comparingIdx: j };
+      results.push(step);
+      console.log(JSON.stringify(results));
+    }
+    if (i <= j) {
+      Swap(A, i, j);
+      const step: Steps = { A: A, currentIdx: i, comparingIdx: j };
+      results.push(step);
+      console.log(JSON.stringify(results));
+
+      i++;
       j--;
     }
   }
-  // After meeting, undo last swap and move pivot to correct position
-  Swap(A, i, j);
-  Swap(A, lo, j);
-  return j;
+  return i;
 }
 
 // Swap Utility Function
@@ -191,6 +238,7 @@ export {
   InsertionSort,
   generateRandomArray,
   MergeSort,
+  GenQuickSort,
   QuickSort,
   Merge,
   Swap,

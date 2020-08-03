@@ -105,8 +105,9 @@ export class SortingAlgorithmsComponent implements OnInit {
         // visualization here
         let temp = stepper.next();
         console.log("temp is" + temp);
+        done = temp.done;
+
         if (temp.done) {
-          this.unsortedArray = temp.value["A"];
           break;
         }
         console.log(temp.value);
@@ -114,15 +115,10 @@ export class SortingAlgorithmsComponent implements OnInit {
         // Render new array and indexs
         // Generator function will either yield just an array or array and indices
 
-        if (temp.value.hasOwnProperty("array")) {
-          this.unsortedArray = temp.value["A"];
-        } else {
-          this.unsortedArray = temp.value["A"];
-          this.currentIdx = temp.value["i"];
-          this.comparingIdx = temp.value["j"];
-        }
+        this.unsortedArray = temp.value["A"];
+        this.currentIdx = temp.value["i"];
+        this.comparingIdx = temp.value["j"];
 
-        done = temp.done;
         console.log(temp.done);
         // Each animation frame will resolve every x ms
         await timer(1000 / this.sortSpeed);
@@ -133,6 +129,42 @@ export class SortingAlgorithmsComponent implements OnInit {
   mergeSort() {
     let A = this.unsortedArray;
     this.unsortedArray = Sort.MergeSort(A);
+  }
+
+  quickSort() {
+    let A = this.unsortedArray;
+    console.log(A);
+
+    // Adapted from
+    // https://stackoverflow.com/questions/59164452/javascript-settimeout-order-of-execution
+    const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    this.selectedAlgorithm = Sort.GenQuickSort;
+    let stepper = this.selectedAlgorithm(A),
+      done = false;
+    (async () => {
+      while (!done) {
+        // visualization here
+        console.log(stepper);
+        let temp = stepper.next();
+        console.log("temp is", temp);
+        done = temp.done;
+
+        if (temp.done) {
+          break;
+        } else {
+          this.unsortedArray = temp.value["A"];
+          this.currentIdx = temp.value["currentIdx"];
+          this.comparingIdx = temp.value["comparingIdx"];
+        }
+
+        // Render new array and indexs
+        // Generator function will either yield just an array or array and indices
+
+        // Each animation frame will resolve every x ms
+        await timer(1000 / this.sortSpeed);
+      }
+    })();
   }
 
   generateRandomArray() {

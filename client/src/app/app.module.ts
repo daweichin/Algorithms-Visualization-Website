@@ -15,6 +15,7 @@ import {
   MatListModule,
   MatInputModule,
   MatSliderModule,
+  MatSelectModule,
 } from "@angular/material";
 import { AppRoutingModule } from "./app-routing.module";
 import { SortingAlgorithmsComponent } from "./pages/sort/sort.component";
@@ -41,6 +42,7 @@ import { HomeComponent } from "./pages/home/home.component";
     MatInputModule,
     MatSliderModule,
     AppRoutingModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

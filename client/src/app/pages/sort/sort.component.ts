@@ -14,24 +14,23 @@ import * as Sort from "../../algorithms/sort";
   styleUrls: ["./sort.component.css"],
 })
 export class SortingAlgorithmsComponent implements OnInit {
+  // Rendering Variables
   scaledBarWidth: number;
-
-  // Sorting Variables
   unsortedArray: number[] = [];
   sortedArray: number[];
   currentIdx: number;
   comparingIdx: number;
-
   currentIdxColor = "green";
   comparingIdxColor = "#FF4081";
 
   // Adjustable Params
-  arrayLength = 10;
+  arrayLength = 25;
   sortSpeed = 30;
+  sortInProgress = false;
 
   // Function reference
   selectedAlgorithm: any;
-  selectedAlgorithmName: String;
+  selectedAlgorithmName: string;
 
   constructor() {
     this.unsortedArray = Sort.generateRandomArray(this.arrayLength);
@@ -68,22 +67,18 @@ export class SortingAlgorithmsComponent implements OnInit {
       case "SelectionSort":
         console.log("SelectionSort Loaded");
         this.selectedAlgorithm = Sort.SelectionSort;
-        this.selectedAlgorithmName = "Selection Sort";
         break;
       case "InsertionSort":
         console.log("InsertionSort Loaded");
         this.selectedAlgorithm = Sort.InsertionSort;
-        this.selectedAlgorithmName = "Insertion Sort";
         break;
       case "MergeSort":
         console.log("MergeSort Loaded");
-        this.selectedAlgorithm = Sort.MergeSort;
-        this.selectedAlgorithmName = "Merge Sort";
+        this.selectedAlgorithm = Sort.GenMergeSort;
         break;
       case "QuickSort":
         console.log("QuickSort Loaded");
-        this.selectedAlgorithm = Sort.QuickSort;
-        this.selectedAlgorithmName = "Quick Sort";
+        this.selectedAlgorithm = Sort.GenQuickSort;
         break;
       default:
         console.log("Default switch");
@@ -91,8 +86,10 @@ export class SortingAlgorithmsComponent implements OnInit {
   }
 
   sort() {
+    this.sortInProgress = true;
+
+    this.loadAlgorithm(this.selectedAlgorithmName);
     let A = this.unsortedArray;
-    console.log(A);
 
     // Adapted from
     // https://stackoverflow.com/questions/59164452/javascript-settimeout-order-of-execution
@@ -103,54 +100,16 @@ export class SortingAlgorithmsComponent implements OnInit {
     (async () => {
       while (!done) {
         // visualization here
-        let temp = stepper.next();
-        console.log("temp is" + temp);
-        done = temp.done;
 
-        if (temp.done) {
-          break;
-        }
+        let temp = stepper.next();
+        done = temp.done;
         console.log(temp.value);
 
-        // Render new array and indexs
-        // Generator function will either yield just an array or array and indices
-
-        this.unsortedArray = temp.value["A"];
-        this.currentIdx = temp.value["i"];
-        this.comparingIdx = temp.value["j"];
-
-        console.log(temp.done);
-        // Each animation frame will resolve every x ms
-        await timer(1000 / this.sortSpeed);
-      }
-    })();
-  }
-
-  mergeSort() {
-    let A = this.unsortedArray;
-    this.unsortedArray = Sort.MergeSort(A);
-  }
-
-  quickSort() {
-    let A = this.unsortedArray;
-    console.log(A);
-
-    // Adapted from
-    // https://stackoverflow.com/questions/59164452/javascript-settimeout-order-of-execution
-    const timer = (ms) => new Promise((res) => setTimeout(res, ms));
-
-    this.selectedAlgorithm = Sort.GenQuickSort;
-    let stepper = this.selectedAlgorithm(A),
-      done = false;
-    (async () => {
-      while (!done) {
-        // visualization here
-        console.log(stepper);
-        let temp = stepper.next();
-        console.log("temp is", temp);
-        done = temp.done;
-
         if (temp.done) {
+          // Sort is over
+          this.currentIdx = null;
+          this.comparingIdx = null;
+          this.sortInProgress = false;
           break;
         } else {
           this.unsortedArray = temp.value["A"];
@@ -158,9 +117,7 @@ export class SortingAlgorithmsComponent implements OnInit {
           this.comparingIdx = temp.value["comparingIdx"];
         }
 
-        // Render new array and indexs
-        // Generator function will either yield just an array or array and indices
-
+        console.log(temp.done);
         // Each animation frame will resolve every x ms
         await timer(1000 / this.sortSpeed);
       }

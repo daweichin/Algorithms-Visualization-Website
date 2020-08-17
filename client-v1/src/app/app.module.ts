@@ -21,6 +21,7 @@ import { SortComponent } from './pages/sort/sort.component';
 import { SearchComponent } from './pages/search/search.component';
 import { HomeComponent } from './pages/home/home.component';
 import { CryptoComponent } from './pages/crypto/crypto.component';
+import { NodeComponent } from './pages/search/Node/node.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { CryptoComponent } from './pages/crypto/crypto.component';
     SearchComponent,
     HomeComponent,
     CryptoComponent,
+    NodeComponent,
   ],
   imports: [
     BrowserModule,

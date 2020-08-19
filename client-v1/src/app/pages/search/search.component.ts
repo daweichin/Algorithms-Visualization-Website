@@ -8,8 +8,8 @@ import { NodeComponent } from './Node/node.component';
 })
 export class SearchComponent implements OnInit {
   // Grid Related Initialization
-  numCols: number = 50;
-  numRows: number = 25;
+  numCols = Array(40);
+  numRows = Array(30);
 
   // Grid is a 2-d array
   grid: [];

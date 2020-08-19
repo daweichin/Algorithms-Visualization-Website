@@ -3,16 +3,17 @@ import { Routes, RouterModule } from '@angular/router';
 import { SortComponent } from './pages/sort/sort.component';
 import { SearchComponent } from './pages/search/search.component';
 import { HomeComponent } from './pages/home/home.component';
-
+import { CryptoComponent } from './pages/crypto/crypto.component';
 
 const routes: Routes = [
-  { path: "sort", component: SortComponent },
-  { path: "search", component: SearchComponent },
-  { path: "", component: HomeComponent },
+  { path: 'sort', component: SortComponent },
+  { path: 'search', component: SearchComponent },
+  { path: '', component: HomeComponent },
+  { path: 'crypto', component: CryptoComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

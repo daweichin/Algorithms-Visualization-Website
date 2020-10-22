@@ -1,8 +1,14 @@
 <div class="container">
+  <button>Start Search</button>
   <div class="grid-container">
-    <div *ngFor="let rows of numRows" class="row">
-      <div *ngFor="let cols of numCols" class="col">
-        <app-node [numNodes]="25"></app-node>
+    <div *ngFor="let rows of numRows; let rowIndex = index" class="row">
+      <div *ngFor="let cols of numCols; let colIndex = index" class="col">
+        <app-node
+          [numNodes]="25"
+          [isStart]="isStart([colIndex, rowIndex])"
+          [isEnd]="isEnd([colIndex, rowIndex])"
+          [position]="[colIndex, rowIndex]"
+        ></app-node>
       </div>
     </div>
   </div>

@@ -6,18 +6,15 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./node.component.scss'],
 })
 export class NodeComponent implements OnInit {
-  // Rendering Variables
   nodeSize: number;
-  unsortedArray: number[] = [];
-  sortedArray: number[];
-  currentIdx: number;
-  comparingIdx: number;
-  currentIdxColor = 'green';
-  comparingIdxColor = '#FF4081';
 
   @Input() numNodes: number;
+  @Input() isStart: boolean;
+  @Input() isEnd: boolean;
+  @Input() position: number[];
 
   constructor() {
+    // Nodesize in px
     this.nodeSize = 16;
   }
 
@@ -28,22 +25,20 @@ export class NodeComponent implements OnInit {
       'height.px': this.nodeSize,
       'width.px': this.nodeSize,
     };
-    style['border'] = '1px solid red';
-    return style;
-    // if (this.currentIdx == n) {
-    //   style['background-color'] = this.currentIdxColor;
-    //   return style;
-    // } else if (this.comparingIdx == n) {
-    //   style['background-color'] = this.comparingIdxColor;
-    //   return style;
-    // } else {
-    //   style['background-color'] = '#3F51B5';
-    //   return style;
-    // }
+    style['border'] = '0.5px solid blue';
+    if (this.isStart === true) {
+      style['background-color'] = 'blue';
+      return style;
+    } else if (this.isEnd === true) {
+      style['background-color'] = 'pink';
+      return style;
+    } else {
+      return style;
+    }
   }
 
+  // Testing Function to give information about a particular node
   test() {
-    alert('Clicked on node');
-    console.log('clicked');
+    console.log(this.position);
   }
 }

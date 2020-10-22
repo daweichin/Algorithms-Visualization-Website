@@ -1,1 +1,4 @@
-// Binary Search
+// Dikjstras Algorithm
+function Dikjstras() {
+
+}

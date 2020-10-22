@@ -8,8 +8,11 @@ import { NodeComponent } from './Node/node.component';
 })
 export class SearchComponent implements OnInit {
   // Grid Related Initialization
+  // Although the indexes are fine, why does increasing numCols increase the displayed ROWS and numRows increase COLS??
   numCols = Array(40);
-  numRows = Array(30);
+  numRows = Array(20);
+  startNode = [10, 10];
+  endNode = [30, 10];
 
   // Grid is a 2-d array
   grid: [];
@@ -20,5 +23,17 @@ export class SearchComponent implements OnInit {
 
   initializeGrid() {
     const grid = [];
+  }
+
+  isStart(pos): boolean {
+    if (JSON.stringify(pos) === JSON.stringify(this.startNode)) {
+      return true;
+    }
+  }
+
+  isEnd(pos): boolean {
+    if (JSON.stringify(pos) === JSON.stringify(this.endNode)) {
+      return true;
+    }
   }
 }

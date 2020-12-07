@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CryptoComponent implements OnInit {
 
+  selectedAlgorithm: any;
+
   constructor() { }
 
   ngOnInit(): void {

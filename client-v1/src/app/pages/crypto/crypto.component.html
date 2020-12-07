@@ -1,1 +1,23 @@
-<p>crypto works!</p>
+<h2>Cryptography and Security Playground</h2>
+
+<!-- Algorithm Selection -->
+<mat-form-field appearance="fill">
+  <mat-label>Select an algorithm</mat-label>
+  <mat-select [(value)]="selectedAlgorithm" required>
+    <mat-option value="Caeser">Caeser Cipher</mat-option>
+    <mat-option value="Affine">Affine Ciper</mat-option>
+    <!-- DES -->
+    <mat-option value="DES">DES</mat-option>
+
+    <!-- AES -->
+    <mat-option value="AES">AES</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<h4>{{selectedAlgorithm}}</h4>
+
+<!-- Options -->
+<div>Options</div>
+<!-- Plaintext -->
+
+<!-- Ciphertext -->

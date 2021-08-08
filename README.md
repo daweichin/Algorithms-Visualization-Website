@@ -22,3 +22,7 @@ Crytography
 - Classical Ciphers
 - [A]symmetric Key Algorithms
 - Euclids GCD Algorithm
+
+# Deployment
+
+ng build --prod --base-href "https://domainance.github.io/projects/algovisualizer/"

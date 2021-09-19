@@ -25,4 +25,4 @@ Crytography
 
 # Deployment
 
-ng build --prod --output-path docs --base-href "https://domainance.github.io/Algorithms-Visualization-Website/"
+-- pipeline test

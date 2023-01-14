@@ -1,4 +1,0 @@
-// Dikjstras Algorithm
-function Dikjstras() {
-
-}

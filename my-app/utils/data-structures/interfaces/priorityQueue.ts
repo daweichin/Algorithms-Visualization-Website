@@ -9,15 +9,15 @@
  * @test insertAt represents
  */
 
-export interface PriorityQueue<ListNode> {
-  data: ListNode[];
+export interface PriorityQueue<T> {
+  data: ListNode<T>[];
   size: number;
 
-  peek: () => ListNode;
-  pop: () => ListNode;
-  insert: (item: ListNode) => void;
-  insertAt?: (item: ListNode, index: number) => void;
-  deleteAt?: (item: ListNode, index: number) => void;
+  peek: () => T;
+  pop: () => T;
+  insert: (item: T) => void;
+  insertAt?: (item: T, index: number) => void;
+  deleteAt?: (item: T, index: number) => void;
 }
 
 export interface ListNode<T> {

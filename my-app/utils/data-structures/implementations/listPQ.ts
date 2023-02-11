@@ -1,35 +1,53 @@
-import { PriorityQueue, ListNode } from "../interfaces/priorityQueue";
+import { PriorityQueue, Node } from "../interfaces/priorityQueue";
 
 /**
  * Implementation of a Priority Queue using a List
+ *
  * peek: O(1)
  * pop: O(n)
  * insert: O(1)
+ *
+ * Usage: let listPQ: ListPQ<number>
  */
-export default class ListPQ<T> implements PriorityQueue<ListNode<T>> {
+
+interface ListNode<T> extends Node<T> {}
+
+export default class ListPQ<T> implements PriorityQueue<T> {
   data: ListNode<T>[] = [];
   size: number = 0;
   minPointerIndex: number = 0;
 
   constructor(initialData: T[]) {
     initialData.forEach((e) => {
-      let newNode: ListNode<T> = { value: e };
-      this.insert(newNode);
+      // HACK: This cast basically means this ListPQ will only work for numbers
+      // TODO: Add string/object support
+      const numKey = e as number;
+      this.insert(e, numKey);
     });
   }
 
-  public peek = (): ListNode<T> => {
-    return this.data[this.minPointerIndex];
+  /**
+   * Returns the value with the "minimum" priority - O(1)
+   * @returns
+   */
+  public peek = (): T => {
+    let listNode = this.data[this.minPointerIndex];
+    return listNode.value;
   };
 
-  public pop = (): ListNode<T> => {
-    let poppedItem = this.data[this.minPointerIndex];
+  /**
+   * Removes and Returns the value with the "minimum" priority - O(n)
+   * @returns
+   */
+  public pop = (): T => {
+    let poppedListNode = this.data[this.minPointerIndex];
+    let poppedValue = poppedListNode.value;
     // Remove the popped item
     this.data.splice(this.minPointerIndex, 1);
     // Find the next smallest element
     this.updateSmallestPointerIndex();
     this.size -= 1;
-    return poppedItem;
+    return poppedValue;
   };
 
   private updateSmallestPointerIndex = () => {
@@ -44,16 +62,27 @@ export default class ListPQ<T> implements PriorityQueue<ListNode<T>> {
     this.minPointerIndex = minIdx;
   };
 
-  public insert = (item: ListNode<T>) => {
+  /**
+   * Insert a new item - O(1)
+   * @param item
+   */
+  public insert = (item: T, key: number) => {
+    let newListNode: ListNode<T> = { value: item, key: key };
+    // If there is no data, just add to data
     if (this.data.length === 0) {
-      this.data.push(item);
+      this.data.push(newListNode);
       this.size += 1;
-    } else if (item.value < this.data[this.minPointerIndex].value) {
-      this.data.push(item);
+    }
+    // Otherwise, if the incoming node is smaller than the current min, update the min
+    // NOTE: the comparitor assumes the values are comparable
+    else if (newListNode.value < this.data[this.minPointerIndex].value) {
+      this.data.push(newListNode);
       this.size = this.size + 1;
       this.minPointerIndex = this.size - 1;
-    } else {
-      this.data.push(item);
+    }
+    // Otherwise, just add the node in
+    else {
+      this.data.push(newListNode);
       this.size += 1;
     }
   };

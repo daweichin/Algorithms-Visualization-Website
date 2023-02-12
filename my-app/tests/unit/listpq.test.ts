@@ -1,4 +1,4 @@
-import ListPQ from "../../utils/data-structures/implementations/listPQ";
+import ListPQ from "../../utils/data-structures/implementations/ListPriorityQueue";
 
 describe("test", () => {
   // beforeAll()

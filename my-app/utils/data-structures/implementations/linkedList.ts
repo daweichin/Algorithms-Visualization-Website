@@ -1,4 +1,4 @@
-import { Collection } from "../interfaces/collection";
+import { Collection } from "../interfaces/Collection";
 import { LinkedListIterator } from "./linkedListIterator";
 
 // ListNodes should be instantiated without a "next" value?

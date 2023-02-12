@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { GridNode } from "../models/Node";
-import IHeap from "./data-structures/interfaces/priorityQueue";
+import IHeap from "./data-structures/interfaces/Heap";
 
 export function getWindowDimensions() {
   const width = window.innerWidth;

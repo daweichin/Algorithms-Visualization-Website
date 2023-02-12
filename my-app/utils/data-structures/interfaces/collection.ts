@@ -21,14 +21,15 @@ export interface Collection<T> extends Iterable<T> {
   length: number;
 
   /**************************************************
-   * Manipulation Methods
+   * Command Methods
    **************************************************/
 
   /**
    *  Add element to end of collection
    * @param item
    */
-  push: (item: T) => void;
+  push: (item: T, key?: number) => void;
+  
 
   /**
    *  Remove element from end of Collection, or undefined if Collection is empty
@@ -44,7 +45,7 @@ export interface Collection<T> extends Iterable<T> {
    *  Add element to front of Collection
    * @param item
    */
-  unshift: (item: T) => void; //
+  unshift: (item: T) => void;
 
   /**
    *  Add element to any index in the collection
@@ -57,4 +58,14 @@ export interface Collection<T> extends Iterable<T> {
    * @param item
    */
   removeAt?: (index: number) => void;
+
+  /**************************************************
+   * Query Methods
+   **************************************************/
+
+  /**
+   * Retrieve the element at a certain index
+   * @param index
+   */
+  get?: (index: number) => T;
 }

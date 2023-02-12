@@ -1,4 +1,3 @@
-import { Type } from "typescript";
 import { Action } from "./Plan";
 
 export enum NodeType {
@@ -22,10 +21,11 @@ export interface IGridNode {
 export class GridNode implements IGridNode {
   xCoord: number;
   yCoord: number;
-  action?: Action | undefined;
   path: [GridNode, Action][]
   neighbours: GridNode[];
   type: NodeType;
+  action?: Action | undefined; // Represents the action taken from this node
+  cost?: number // Some algorithms associate a cost of the node to the goal
 
   public constructor(xCoord: number, yCoord: number, type: NodeType = NodeType.Normal) {
     this.xCoord = xCoord

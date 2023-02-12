@@ -1,3 +1,4 @@
+import { NodeObject } from "../utils/data-structures/core/MinHeap.ts";
 import { Action } from "./Plan";
 
 export enum NodeType {
@@ -18,7 +19,7 @@ export interface IGridNode {
     type: NodeType;
 }
 
-export class GridNode implements IGridNode {
+export class GridNode implements IGridNode, NodeObject {
   xCoord: number;
   yCoord: number;
   path: [GridNode, Action][]

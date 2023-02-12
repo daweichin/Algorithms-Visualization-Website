@@ -8,6 +8,7 @@ import { NodeType, GridNode } from "../models/Node";
 import { DFSSearch } from "../utils/algorithms/dfs";
 import { BFSSearch } from "../utils/algorithms/bfs";
 import { Plan } from "../models/Plan";
+import { AStarSearch } from "../utils/algorithms/astar";
 
 const SearchPage = () => {
   return (
@@ -57,6 +58,15 @@ const GridLayout = () => {
     endNode: GridNode
   ): void => {
     const plan: Plan = DFSSearch(grid, startNode, endNode);
+    executePlanAnimation(plan);
+  };
+
+  const startAStarSearch = (
+    grid: Grid,
+    startNode: GridNode,
+    endNode: GridNode
+  ): void => {
+    const plan: Plan = AStarSearch(grid, startNode, endNode);
     executePlanAnimation(plan);
   };
 
@@ -114,9 +124,9 @@ const GridLayout = () => {
     <div className="grid-wrapper">
       <div className="flex">
         <button onClick={() => resetGrid()}>Reset</button>
-        <button>A*</button>
-        <button>Bi-directional A*</button>
-        <button>Djikstra's</button>
+        <button onClick={() => startAStarSearch(grid, startNode, endNode)>A*</button>
+        // <button>Bi-directional A*</button>
+        // <button>Djikstra's</button>
         <button onClick={() => startBFSSearch(grid, startNode, endNode)}>
           BFS
         </button>

@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { GridNode } from "../models/Node";
-import IHeap from "./data-structures/interfaces/Heap";
 
 export function getWindowDimensions() {
   const width = window.innerWidth;
@@ -11,35 +9,7 @@ export function getWindowDimensions() {
   };
 }
 
-interface QueueNode {
-  value: any;
-  priority: number;
-}
-
-interface PriorityQueue<T> {
-  insert(item: T, priority: number): void;
-  peek(): T;
-  pop(): T;
-  size(): number;
-  isEmpty(): boolean;
-}
-
-// Min-Heap implementation
-// DC NOTE: extends keyword in TS provides similar constraint as where keyword in C# generics
-// providing us access to T.value, T.priority
-// usage: let heap = Heap<QueueNode>
-class Heap<T extends QueueNode> implements IHeap<T> {
-  data: T[] = [];
-  size: number = 0;
-
-  public peek = () => {
-    return this.data[0];
-  };
-  public pop = () => {
-    return this.data[0];
-  };
-  public insert = (item: T) => {
-    //
-    item.value;
-  };
+export function getManhattanDistance(gridNode1: GridNode, gridNode2: GridNode): number{
+  return Math.sqrt(Math.pow(gridNode1.xCoord - gridNode2.xCoord, 2) 
+  + Math.pow(gridNode1.yCoord - gridNode2.yCoord, 2))
 }

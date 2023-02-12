@@ -1,8 +1,8 @@
 import { Heap, Node } from "../interfaces/Heap";
 
-export type NodeObject = {
-    [prop: string]: number;
-  };
+// TODO: Couldn't figure this one out, how to enforce a type with dynamic props?
+// TODO: EG: "NodeObject" must have at least one string: number prop
+export type NodeObject = {};
 
 export class MinHeap<T extends number | NodeObject> implements Heap<T> {
     data: HeapNode<T>[];

@@ -9,26 +9,16 @@
  * @test insertAt represents
  */
 
-export interface Heap<T> {
+export interface MinHeap<T> {
   // Use built-in JS dynamic array
-  data: Node<T>[];
+  data: T[];
 
-  peek: () => T | undefined;
-  pop: () => T | undefined;
-  insert: (item: T, key: number) => void;
-  insertAt?: (item: T, key: number, index: number) => void;
+  peekMin: () => T | null;
+  extractMin: () => T | null;
+  insert: (item: T) => void;
+  insertAt?: (item: T, index: number) => void;
   deleteAt?: (item: T, index: number) => void;
 
-  heapifyUp: (heap: Heap<T>, index: number) => void;
-  heapifyDown: (heap: Heap<T>, index: number) => void;
-
-}
-
-export interface Node<T> {
-  // Nodes must have a number typed key
-  // For simple cases where the caller is a primitive such as number, the key can just be set to the value
-  // However, for more advanced cases such as a queue of objects, it is down to the implementation to
-  // supply a number based key to determine priority
-  key: number;
-  value: T;
+  heapifyUp: (heap: MinHeap<T>, index: number) => void;
+  heapifyDown: (heap: MinHeap<T>, index: number) => void;
 }

@@ -12,13 +12,13 @@ const DIRECTIONS = [
 
 const mapDirectionEnumToArray = (directionArray: number[]): Action => {
   if (directionArray[0] === 1) {
-    return Action.DOWN;
-  } else if (directionArray[0] === -1) {
-    return Action.UP;
-  } else if (directionArray[1] === 1) {
     return Action.RIGHT;
-  } else if (directionArray[1] === -1) {
+  } else if (directionArray[0] === -1) {
     return Action.LEFT;
+  } else if (directionArray[1] === 1) {
+    return Action.DOWN;
+  } else if (directionArray[1] === -1) {
+    return Action.UP;
   }
   return Action.NONE;
 };
@@ -51,6 +51,10 @@ export class Grid implements IGrid {
         this.nodes[i][j] = node;
       }
     }
+  }
+
+  public updateNode(xCoord: number, yCoord: number, node: GridNode) {
+    this.nodes[yCoord][xCoord] = node;
   }
 
   public setNodeType(xCoord: number, yCoord: number, nodeType: NodeType) {

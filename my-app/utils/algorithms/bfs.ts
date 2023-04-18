@@ -20,8 +20,8 @@ export const BFSSearch = (
   rootChildren.forEach((tuple) => {
     // Include the first node and it shows up in path
     // tuple[0].path.push([startNode, Action.NONE])
+    tuple[0].type = NodeType.Expanded;
     tuple[0].path.push([tuple[0], tuple[1]]);
-    expandedNodes.push(tuple[0]);
   });
   // Expanded nodes are ones that are already visited
   // Queue represents frontier nodes
@@ -32,22 +32,19 @@ export const BFSSearch = (
   while (queue.length > 0) {
     let currentNode = queue.shift() as GridNode;
     grid.isVisited.set(currentNode.toString(), true);
-    // console.log(currentNode.path)
-    // console.log(queue)
+
+    // If the goal is found, return the current path
     if (
       currentNode.xCoord === endNode.xCoord &&
       currentNode.yCoord === endNode.yCoord
     ) {
-      expandedNodes.forEach((n) => {
-        n.type = NodeType.Expanded;
-      });
-      //   currentNode.path.forEach((tup) => {
-      //     tup[0].type = NodeType.Path;
-      //   });
+      console.log("GOAL FOUND");
+      console.log(currentNode.path);
       return { finalSteps: currentNode.path, expandedNodes: expandedNodes };
     }
 
     let childNodes: [GridNode, Action][] = grid.getNeighbours(currentNode);
+
     let unvisitedChildNodes: [GridNode, Action][] = childNodes.filter(
       (n) => grid.isVisited.get(n[0].toString()) === false
     );
@@ -56,10 +53,10 @@ export const BFSSearch = (
       let newNode = dirNodeTuple[0];
       let action = dirNodeTuple[1];
       // Assign the existing path then push the action
-      // BUG: Needs a new ref
       newNode.path = [...currentNode.path];
       newNode.path.push([newNode, action]);
 
+      newNode.type = NodeType.Expanded;
       expandedNodes.push(newNode);
       queue.push(newNode);
     });

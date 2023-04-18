@@ -12,7 +12,7 @@ import { Node, PriorityQueue } from "../interfaces/PriorityQueue";
 
 interface ListNode<T> extends Node<T> {}
 
-export default class ListPriorityQueue<T extends number> implements PriorityQueue<T> {
+export default class ListPriorityQueue<T extends number> {
   data: ListNode<T>[] = [];
   length: number = 0;
   minPointerIndex: number = 0;
@@ -24,6 +24,7 @@ export default class ListPriorityQueue<T extends number> implements PriorityQueu
       this.push(e, e);
     });
   }
+
   shift?: (() => T | undefined) | undefined;
   unshift?: ((item: T) => void) | undefined;
   insertAt?: ((item: T, index: number) => void) | undefined;
@@ -74,8 +75,8 @@ export default class ListPriorityQueue<T extends number> implements PriorityQueu
     /**
      * TODO: Had to make "key" optional to match interface sig
      * TODO: guard clause to ensure key is assignable later on
-     *  */ 
-    if(!key) return
+     *  */
+    if (!key) return;
 
     let newListNode: ListNode<T> = { value: item, key: key };
     // If there is no data, just add to data
@@ -101,15 +102,13 @@ export default class ListPriorityQueue<T extends number> implements PriorityQueu
     // TODO: Needs testing
     return {
       next: () => {
-        let poppedValue = this.pop()
-        if(poppedValue)
-        {
-          return {value: poppedValue, done: false}
+        let poppedValue = this.pop();
+        if (poppedValue) {
+          return { value: poppedValue, done: false };
+        } else {
+          return { value: undefined, done: true };
         }
-        else {
-          return {value: undefined, done: true}
-        }
-      }
-    }
+      },
+    };
   }
 }

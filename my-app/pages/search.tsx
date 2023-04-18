@@ -28,14 +28,15 @@ const GridLayout = () => {
     new GridNode(1, 1, NodeType.Start)
   );
   const [endNode, setEndNode] = useState<GridNode>(
-    new GridNode(5, 5, NodeType.Goal)
+    new GridNode(1, 7, NodeType.Goal)
   );
   const gridSize = 16;
   const grid = new Grid(gridSize);
   grid.setNodeType(startNode.xCoord, startNode.yCoord, NodeType.Start);
   grid.setNodeType(endNode.xCoord, endNode.yCoord, NodeType.Goal);
   const [nodes, setNodes] = useState<GridNode[][]>(grid.nodes);
-  const [animationSpeed, setAnimationSpeed] = useState<number>(100);
+  // higher speed is faster
+  const [animationSpeed, setAnimationSpeed] = useState<number>(1000);
 
   useEffect(() => {
     const { height, width } = getWindowDimensions();
@@ -85,8 +86,8 @@ const GridLayout = () => {
         let temp: any = GetAnimationStep(plan).next();
         isPlanCompleted = temp.done;
         if (isPlanCompleted) {
-          console.log("PLAN COMPLETED");
-          plan.finalSteps.forEach((s) => {
+          plan.finalSteps.forEach((s, i) => {
+            s[0].pathNumber = i;
             s[0].type = NodeType.Path;
             updateNode(s[0], grid);
           });
@@ -102,7 +103,7 @@ const GridLayout = () => {
 
   const updateNode = (node: GridNode, grid: Grid) => {
     if (node) {
-      grid.setNodeType(node.xCoord, node.yCoord, node.type);
+      grid.updateNode(node.xCoord, node.yCoord, node);
       const newNodes = [...grid.nodes];
       setNodes(newNodes);
     }
@@ -116,7 +117,11 @@ const GridLayout = () => {
   }
 
   function resetGrid(): void {
-    throw new Error("Function not implemented.");
+    const gridSize = 16;
+    const grid = new Grid(gridSize);
+    grid.setNodeType(startNode.xCoord, startNode.yCoord, NodeType.Start);
+    grid.setNodeType(endNode.xCoord, endNode.yCoord, NodeType.Goal);
+    setNodes(grid.nodes);
   }
 
   return (
@@ -124,9 +129,9 @@ const GridLayout = () => {
     <div className="grid-wrapper">
       <div className="flex">
         <button onClick={() => resetGrid()}>Reset</button>
-        <button onClick={() => startAStarSearch(grid, startNode, endNode)>A*</button>
-        // <button>Bi-directional A*</button>
-        // <button>Djikstra's</button>
+        <button onClick={() => startAStarSearch(grid, startNode, endNode)}>
+          A*
+        </button>
         <button onClick={() => startBFSSearch(grid, startNode, endNode)}>
           BFS
         </button>
@@ -200,7 +205,9 @@ const NodeComponent = (props: {
       className="grid-node"
       style={style}
     >
-      <p></p>
+      <div className="text-center">
+        <p>{props.node.pathNumber}</p>
+      </div>
     </div>
   );
 };

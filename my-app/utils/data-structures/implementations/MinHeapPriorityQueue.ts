@@ -1,5 +1,5 @@
-import { MinHeap, NodeObject } from "../core/MinHeap.ts";
-import { PriorityQueue } from "../interfaces/PriorityQueue";
+import { EqualityFunction, MinBinaryHeap } from "../core/MinHeap";
+import { PriorityQueue } from "../interfaces/PriorityQueue.js";
 
 /**
  * Implementation of a Priority Queue using a Binary Heap,
@@ -20,42 +20,35 @@ import { PriorityQueue } from "../interfaces/PriorityQueue";
  */
 
 // NOTE: To use this class with objects, a keyPropName MUST be supplied
-export default class MinHeapPriorityQueue<T extends number | NodeObject>
-  implements PriorityQueue<T>
-{
-  heap: MinHeap<T>;
+export default class MinHeapPriorityQueue<T> implements PriorityQueue<T> {
+  heap: MinBinaryHeap<T>;
 
-  constructor(keyPropName?: string) {
-    if(keyPropName) {
-      this.heap = new MinHeap<T>(undefined, keyPropName);
-    }
-    else {
-      this.heap = new MinHeap<T>(undefined)
-    }
+  constructor(arr?: Iterable<T>, compareFn?: EqualityFunction<T>) {
+    this.heap = new MinBinaryHeap<T>(arr, compareFn);
   }
 
   // HACK: Not really sure if I need this if I already have a ctor
   // maybe might be useful to have a "reset" heap or something?s
   startHeap(): void {
-    this.heap = new MinHeap<T>();
-  };
+    this.heap = new MinBinaryHeap<T>();
+  }
 
-  insert(item: T, key: number): void {
-    this.heap.insert(item, key)
-  };
- 
-  extractMin(): T | undefined {
-    if(!this.heap.data) return undefined
-    return this.heap.pop()
-  };
+  insert(item: T): void {
+    this.heap.insert(item);
+  }
+
+  extractMin(): T | null {
+    if (!this.heap.data) return null;
+    return this.heap.extractMin();
+  }
 
   delete(index: number): void {
-    this.heap.delete(index)
-  };
+    this.heap.delete(index);
+  }
 
-  findMin(): T | undefined {
-    if(!this.heap.data) return undefined
-    
-    return this.heap.peek()
-  };
+  findMin(): T | null {
+    if (!this.heap.data) return null;
+
+    return this.heap.peekMin();
+  }
 }

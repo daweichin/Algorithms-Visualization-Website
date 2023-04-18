@@ -15,25 +15,33 @@ Why Typescript? I had recently read a book about Computer Systems, which mostly 
 
 ## Data Structures
 
-As a starting point, I will attempt to implement all the "Fundamental Abstract Data Types" and "Fundamental Data Structures" as listed out in Jeff Erickson's Algorithms book. 
+As a starting point, I will attempt to implement some fundamental DS/Algorithms. 
 
-ADT's can be implemented through Data Structures.
-
-## ADT + DS
+## DS
 
 - [] Sequences
 - [] Vector
 - [] Set
-- [] Stack / Queue
-    - [] Array
-    - [] Singly Linked List
-    - [] Double Linked List
-    - [] Dynamic Array
+- [] Collection
+    - [] Linked List
+    - [] Queue + Dequeue
+    - [] Stack
+    - []
 - [] Ordered Map
     - [] Hash Tables
 - [] Priority Queues
     - [] Simple List 
     - [] Binary Min Heap
+
+## Algorithms
+
+- Sorting
+    - [] Selection, Insertion, Quick, Merge
+- Search
+    - [] DFS
+    - [] BFS
+    - [] A*
+    - [] Hill Climbing
 
 # References
 

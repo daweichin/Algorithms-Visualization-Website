@@ -19,7 +19,8 @@ export const DFSSearch = (
   let rootChildren: Array<[GridNode, Action]> = grid.getNeighbours(startNode);
   rootChildren.forEach((tuple) => {
     // Include the first node and it shows up in path
-    tuple[0].path.push([startNode, Action.NONE]);
+    // tuple[0].path.push([startNode, Action.NONE]);
+    tuple[0].type = NodeType.Expanded;
     tuple[0].path.push([tuple[0], tuple[1]]);
   });
   // Stack represents the nodes to be explored
@@ -35,13 +36,11 @@ export const DFSSearch = (
       currentNode.xCoord === endNode.xCoord &&
       currentNode.yCoord === endNode.yCoord
     ) {
-      expandedNodes.forEach((n) => {
-        n.type = NodeType.Expanded;
-      });
       return { finalSteps: currentNode.path, expandedNodes: expandedNodes };
     }
 
     let childNodes: [GridNode, Action][] = grid.getNeighbours(currentNode);
+
     let unvisitedChildNodes: [GridNode, Action][] = childNodes.filter(
       (n) => grid.isVisited.get(n[0].toString()) === false
     );
@@ -50,9 +49,9 @@ export const DFSSearch = (
       let newNode = dirNodeTuple[0];
       let action = dirNodeTuple[1];
       // Assign the existing path then push the action
-      // BUG: Needs a new ref
       newNode.path = [...currentNode.path];
       newNode.path.push([newNode, action]);
+      newNode.type = NodeType.Expanded;
       expandedNodes.push(newNode);
       stack.push(newNode);
     });

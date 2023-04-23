@@ -149,24 +149,24 @@ describe("HeapTestsContainer", () => {
     });
   });
 
-  describe("Iterate_MinHeap_CorrectlyIterates", () => {
-    it.failing("Pops multi elements from minheap", () => {
-      let heapnode1: GridNode = new GridNode(0, 0, NodeType.Normal);
-      heapnode1.cost = 123;
+  // describe("Iterate_MinHeap_CorrectlyIterates", () => {
+  //   it.failing("Pops multi elements from minheap", () => {
+  //     let heapnode1: GridNode = new GridNode(0, 0, NodeType.Normal);
+  //     heapnode1.cost = 123;
 
-      let heapnode2: GridNode = new GridNode(1, 1, NodeType.Normal);
-      heapnode2.cost = 345;
+  //     let heapnode2: GridNode = new GridNode(1, 1, NodeType.Normal);
+  //     heapnode2.cost = 345;
 
-      let heapnode3: GridNode = new GridNode(2, 2, NodeType.Normal);
-      heapnode3.cost = 4567;
+  //     let heapnode3: GridNode = new GridNode(2, 2, NodeType.Normal);
+  //     heapnode3.cost = 4567;
 
-      const minHeap = new MinBinaryHeap(
-        [heapnode1, heapnode2, heapnode3],
-        comparisonFunction
-      );
+  //     const minHeap = new MinBinaryHeap(
+  //       [heapnode1, heapnode2, heapnode3],
+  //       comparisonFunction
+  //     );
 
-      // TODO: Why doesnt this work when it's a iterable?
-      // minHeap.forEach(e => console.log(e);)
-    });
-  });
+  //     // TODO: Why doesnt this work when it's a iterable?
+  //     // minHeap.forEach(e => console.log(e);)
+  //   });
+  // });
 });

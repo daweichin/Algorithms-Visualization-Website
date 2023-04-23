@@ -12,53 +12,56 @@ export const BFSSearch = (
   startNode: GridNode,
   endNode: GridNode
 ): Plan => {
-  // Prevent the start node from being researched
-  let expandedNodes: GridNode[] = [];
-  grid.isVisited.set(startNode.toString(), true);
-
-  let rootChildren: Array<[GridNode, Action]> = grid.getNeighbours(startNode);
-  rootChildren.forEach((tuple) => {
-    // Include the first node and it shows up in path
-    // tuple[0].path.push([startNode, Action.NONE])
-    tuple[0].type = NodeType.Expanded;
-    tuple[0].path.push([tuple[0], tuple[1]]);
-  });
   // Expanded nodes are ones that are already visited
-  // Queue represents frontier nodes
-  let queue: GridNode[] = rootChildren.map((n) => {
-    return n[0];
-  });
+  let expandedNodes: GridNode[] = [];
 
+  // Queue represents frontier nodes
+  let queue: GridNode[] = [];
+  grid.isVisited.set(startNode.id, true);
+  // Add the startnode to the queue
+  queue.push(startNode);
+
+  // let times = 0;
   while (queue.length > 0) {
+    // console.log(times++);
     let currentNode = queue.shift() as GridNode;
-    grid.isVisited.set(currentNode.toString(), true);
+    // console.log("Current Node is " + currentNode.id);
 
     // If the goal is found, return the current path
-    if (
-      currentNode.xCoord === endNode.xCoord &&
-      currentNode.yCoord === endNode.yCoord
-    ) {
-      console.log("GOAL FOUND");
-      console.log(currentNode.path);
-      return { finalSteps: currentNode.path, expandedNodes: expandedNodes };
+    if (currentNode.equals(endNode)) {
+      // console.log(currentNode.path);
+      console.log(expandedNodes);
+      expandedNodes.forEach((n) => (n.type = NodeType.Normal));
+      return {
+        finalSteps: currentNode.path,
+        expandedNodes: expandedNodes,
+      };
     }
 
     let childNodes: [GridNode, Action][] = grid.getNeighbours(currentNode);
+    currentNode.type = NodeType.Expanded;
+    // Push the node to expandedNodes list if it isn't already in there
+    // Expanded nodes is used to generate the "grey" effect visually,
+    expandedNodes.push(currentNode);
 
-    let unvisitedChildNodes: [GridNode, Action][] = childNodes.filter(
-      (n) => grid.isVisited.get(n[0].toString()) === false
-    );
+    let nodesToExplore: [GridNode, Action][] = childNodes.filter((n) => {
+      let isNodeUnvisited = grid.isVisited.get(n[0].toString()) === false;
+      let isNeighbourAWall = n[0].type === NodeType.Wall;
+      console.log(isNeighbourAWall);
+      return isNodeUnvisited && !isNeighbourAWall;
+    });
 
-    unvisitedChildNodes.forEach((dirNodeTuple) => {
-      let newNode = dirNodeTuple[0];
+    nodesToExplore.forEach((dirNodeTuple) => {
+      let childNode = dirNodeTuple[0];
       let action = dirNodeTuple[1];
-      // Assign the existing path then push the action
-      newNode.path = [...currentNode.path];
-      newNode.path.push([newNode, action]);
 
-      newNode.type = NodeType.Expanded;
-      expandedNodes.push(newNode);
-      queue.push(newNode);
+      // Set the childNode to visited, BUT NOT expanded.
+      grid.isVisited.set(childNode.id, true);
+      // Assign the existing nodes path
+      childNode.path = [...currentNode.path];
+      // Append to the path, the action to get to the new node
+      childNode.path.push([childNode, action]);
+      queue.push(childNode);
     });
   }
 

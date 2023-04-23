@@ -2,33 +2,29 @@ import { Graph } from "./Graph";
 import { GridNode, NodeType } from "./Node";
 import { Action } from "./Plan";
 
-// Right, Left, Up, Down
-const DIRECTIONS = [
-  [1, 0],
-  [-1, 0],
-  [0, 1],
-  [0, -1],
-];
-
-const mapDirectionEnumToArray = (directionArray: number[]): Action => {
-  if (directionArray[0] === 1) {
-    return Action.RIGHT;
-  } else if (directionArray[0] === -1) {
-    return Action.LEFT;
-  } else if (directionArray[1] === 1) {
-    return Action.DOWN;
-  } else if (directionArray[1] === -1) {
-    return Action.UP;
-  }
-  return Action.NONE;
-};
+/**
+ *  Grid starts at 0,0, in top left corner
+ *  Directions represents directions in 2d plane
+ *  Reasoning: "To go right, i need to add 1 to the ycoord"
+ *  Right = [0, 1]
+ *  Left = [0, -1]
+ *  Up, = [-1, 0]
+ *  Down = [1, 0]
+ *
+ * @param directionArray
+ * @returns
+ */
+const DIRECTIONS: Map<Action, number[]> = new Map();
+DIRECTIONS.set(Action.RIGHT, [0, 1]);
+DIRECTIONS.set(Action.LEFT, [0, -1]);
+DIRECTIONS.set(Action.DOWN, [1, 0]);
+DIRECTIONS.set(Action.UP, [-1, 0]);
 
 export interface IGrid extends Graph {
   gridSize: number;
+  // Map of if a node has been visited before.
   isVisited: Map<string, boolean>;
 
-  // TODO: Investigate why TS is complaining with the below call
-  // getNeighbour: (point: Point) => Array<[Directions,Point]>;
   getNeighbours: (node: GridNode) => Array<[GridNode, Action]>;
 }
 
@@ -43,7 +39,6 @@ export class Grid implements IGrid {
 
   public constructor(gridSize: number) {
     this.gridSize = gridSize;
-    this.adjListWithAction = this.generateAdjacencyLists();
     this.nodes = Array.from(Array(gridSize), () => new Array(gridSize));
     for (let i = 0; i < gridSize; i++) {
       for (let j = 0; j < gridSize; j++) {
@@ -51,14 +46,27 @@ export class Grid implements IGrid {
         this.nodes[i][j] = node;
       }
     }
+    this.adjListWithAction = this.generateAdjacencyLists();
+  }
+
+  // If trying to get node (1,2), xCoord should be 1, yCoord should be 2
+  // eg: nodes[1][2] ==> 1st col, 2nd row,
+  public getNode(xCoord: number, yCoord: number): GridNode {
+    return this.nodes[xCoord][yCoord];
   }
 
   public updateNode(xCoord: number, yCoord: number, node: GridNode) {
-    this.nodes[yCoord][xCoord] = node;
+    console.log(`UPDATING ${xCoord}, ${yCoord}`);
+    this.nodes[xCoord][yCoord] = node;
+  }
+
+  public toggleNodeType(xCoord: number, yCoord: number, node: GridNode) {
+    node.type = NodeType.Wall;
+    this.nodes[xCoord][yCoord] = node;
   }
 
   public setNodeType(xCoord: number, yCoord: number, nodeType: NodeType) {
-    this.nodes[yCoord][xCoord].type = nodeType;
+    this.nodes[xCoord][yCoord].type = nodeType;
   }
 
   public generateAdjacencyLists(): Map<string, Array<[GridNode, Action]>> {
@@ -74,17 +82,26 @@ export class Grid implements IGrid {
   }
 
   public getNeighbours(node: GridNode): Array<[GridNode, Action]> {
-    // Check for corner / edge cases
     let neighbours: Array<[GridNode, Action]> = [];
-    DIRECTIONS.forEach((d) => {
-      const newX = node.xCoord + d[0];
-      const newY = node.yCoord + d[1];
+
+    for (const [key, value] of DIRECTIONS.entries()) {
+      // EG: If direction is right, the num array is [1,0]
+      // so (1,1) -> (2,1), moving right
+      // the yCoord needs to go up 1, in terms of the grid[col][row]
+      const newX = node.xCoord + value[0];
+      const newY = node.yCoord + value[1];
+      // Check for corner / edge cases
       const neighbourExistsInGrid =
         newX >= 0 && newX < this.gridSize && newY >= 0 && newY < this.gridSize;
       if (neighbourExistsInGrid) {
-        neighbours.push([new GridNode(newX, newY), mapDirectionEnumToArray(d)]);
+        // Cannot simply push a new gridNode, need to get the existing one out of the grid?
+        let gridNode = this.getNode(newX, newY);
+        // let gridNode1 = new GridNode(newX, newY);
+        // debugger;
+        neighbours.push([gridNode, key]);
       }
-    });
+    }
+    // Once a node has it's neighbours explored, it should be considered as expanded.
     return neighbours;
   }
 }

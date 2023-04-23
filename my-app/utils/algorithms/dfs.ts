@@ -22,6 +22,7 @@ export const DFSSearch = (
     // tuple[0].path.push([startNode, Action.NONE]);
     tuple[0].type = NodeType.Expanded;
     tuple[0].path.push([tuple[0], tuple[1]]);
+    grid.isVisited.set(tuple[0].id, true);
   });
   // Stack represents the nodes to be explored
   let stack: GridNode[] = rootChildren.map((n) => {
@@ -30,7 +31,6 @@ export const DFSSearch = (
 
   while (stack.length > 0) {
     let currentNode = stack.pop() as GridNode;
-    grid.isVisited.set(currentNode.toString(), true);
 
     if (
       currentNode.xCoord === endNode.xCoord &&
@@ -40,20 +40,21 @@ export const DFSSearch = (
     }
 
     let childNodes: [GridNode, Action][] = grid.getNeighbours(currentNode);
+    currentNode.type = NodeType.Expanded;
 
-    let unvisitedChildNodes: [GridNode, Action][] = childNodes.filter(
-      (n) => grid.isVisited.get(n[0].toString()) === false
-    );
-
-    unvisitedChildNodes.forEach((dirNodeTuple) => {
-      let newNode = dirNodeTuple[0];
+    childNodes.forEach((dirNodeTuple) => {
+      let childNode = dirNodeTuple[0];
       let action = dirNodeTuple[1];
-      // Assign the existing path then push the action
-      newNode.path = [...currentNode.path];
-      newNode.path.push([newNode, action]);
-      newNode.type = NodeType.Expanded;
-      expandedNodes.push(newNode);
-      stack.push(newNode);
+      let hasChildNodeBeenVisited = grid.isVisited.get(childNode.id);
+
+      if (!hasChildNodeBeenVisited) {
+        grid.isVisited.set(childNode.id, true);
+
+        // Assign the existing path then push the action
+        childNode.path = [...currentNode.path];
+        childNode.path.push([childNode, action]);
+        stack.push(childNode);
+      }
     });
   }
 

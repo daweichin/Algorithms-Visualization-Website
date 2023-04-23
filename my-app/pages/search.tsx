@@ -1,7 +1,7 @@
 /// <reference path="../typings/tsd.d.ts" />
 import React, { memo, useEffect, useState } from "react";
 
-import { getWindowDimensions } from "../utils/utils";
+import { getWindowDimensions, useForceUpdate } from "../utils/utils";
 import { EnumDeclaration } from "typescript";
 import { Grid } from "../models/Grid";
 import { NodeType, GridNode } from "../models/Node";
@@ -25,18 +25,20 @@ const GridLayout = () => {
   const [nodeHeight, setNodeHeight] = useState<number>(16);
   const [nodeWidth, setNodeWidth] = useState<number>(16);
   const [startNode, setStartNode] = useState<GridNode>(
-    new GridNode(1, 1, NodeType.Start)
+    new GridNode(0, 0, NodeType.Start)
   );
   const [endNode, setEndNode] = useState<GridNode>(
-    new GridNode(1, 7, NodeType.Goal)
+    new GridNode(1, 2, NodeType.Goal)
   );
-  const gridSize = 16;
+  const gridSize = 4;
+  // This grid is a super object... if more layers then best to move to state management or something
   const grid = new Grid(gridSize);
+  const [gridNodes, setNodes] = useState<GridNode[][]>(grid.nodes);
+
   grid.setNodeType(startNode.xCoord, startNode.yCoord, NodeType.Start);
   grid.setNodeType(endNode.xCoord, endNode.yCoord, NodeType.Goal);
-  const [nodes, setNodes] = useState<GridNode[][]>(grid.nodes);
   // higher speed is faster
-  const [animationSpeed, setAnimationSpeed] = useState<number>(1000);
+  const [animationSpeed, setAnimationSpeed] = useState<number>(10);
 
   useEffect(() => {
     const { height, width } = getWindowDimensions();
@@ -44,12 +46,16 @@ const GridLayout = () => {
     setNodeWidth(width / grid.gridSize);
   }, []);
 
-  const startBFSSearch = (
+  const startBFSSearch = async (
     grid: Grid,
     startNode: GridNode,
     endNode: GridNode
-  ): void => {
-    const plan: Plan = BFSSearch(grid, startNode, endNode);
+  ): Promise<void> => {
+    // this is necessary as the gridNodes state may have been updated, but not the grid itself
+    // this is a hack, TODO: find out best way to do this (eg in vue probably wouldve events or something)
+    grid.nodes = gridNodes;
+    const plan: Plan = await BFSSearch(grid, startNode, endNode);
+    console.log(plan);
     executePlanAnimation(plan);
   };
 
@@ -71,7 +77,6 @@ const GridLayout = () => {
     executePlanAnimation(plan);
   };
 
-  // TODO: Goal node gets painted over by expanding nodes and finalsteps
   const executePlanAnimation = (plan: Plan) => {
     // Once per second, input a new step of the plan
     // Adapted from
@@ -83,9 +88,13 @@ const GridLayout = () => {
       while (!isPlanCompleted) {
         // visualization here
 
+        // ISSUE: by the time we get to the first update, lots of nodes have their internal state set as "expanded"
+        //
         let temp: any = GetAnimationStep(plan).next();
         isPlanCompleted = temp.done;
+        // Once the plan is done, visualize the path
         if (isPlanCompleted) {
+          console.log("PLAN DONE");
           plan.finalSteps.forEach((s, i) => {
             s[0].pathNumber = i;
             s[0].type = NodeType.Path;
@@ -94,6 +103,8 @@ const GridLayout = () => {
           break;
         }
         let expandedNode: GridNode = temp.value;
+        expandedNode.type = NodeType.Expanded;
+        // console.log(expandedNode.id);
         updateNode(expandedNode, grid);
         // Each animation frame will resolve every x ms
         await timer(1000 / animationSpeed);
@@ -101,11 +112,24 @@ const GridLayout = () => {
     })();
   };
 
+  // Update one node at a time - intended for animation purposes
   const updateNode = (node: GridNode, grid: Grid) => {
     if (node) {
+      grid.nodes = gridNodes;
       grid.updateNode(node.xCoord, node.yCoord, node);
-      const newNodes = [...grid.nodes];
-      setNodes(newNodes);
+      let newGridNodes = [...grid.nodes];
+      setNodes((n) => newGridNodes);
+    }
+  };
+
+  const toggleNodeType = (node: GridNode) => {
+    if (node) {
+      // First, get the most up to date state before updating
+      // SUPER hacky, 100% not the right way props
+      grid.nodes = gridNodes;
+      grid.toggleNodeType(node.xCoord, node.yCoord, node);
+      let newGridNodes = [...grid.nodes];
+      setNodes((n) => newGridNodes);
     }
   };
 
@@ -138,12 +162,9 @@ const GridLayout = () => {
         <button onClick={() => startDFSSearch(grid, startNode, endNode)}>
           DFS
         </button>
-        {/* <button onClick={() => updateNodeColor(2, 2, grid)}>
-          Update Node Color
-        </button> */}
       </div>
       <div>
-        {nodes.map((col, i) => (
+        {gridNodes.map((col, i) => (
           <div key={i} className="row-wrapper">
             {col.map((node, j) => {
               return (
@@ -152,6 +173,7 @@ const GridLayout = () => {
                   width={nodeWidth}
                   height={nodeHeight}
                   node={node}
+                  toggleNode={toggleNodeType}
                 />
               );
             })}
@@ -162,14 +184,11 @@ const GridLayout = () => {
   );
 };
 
-const RowComponent = () => {
-  return <div className="row-wrapper"></div>;
-};
-
 const NodeComponent = (props: {
   node: GridNode;
   width: number;
   height: number;
+  toggleNode: Function;
 }) => {
   function mapNodeTypeToColor(nodeType: NodeType) {
     switch (nodeType) {
@@ -201,6 +220,8 @@ const NodeComponent = (props: {
     <div
       onClick={() => {
         console.log(`${props.node.xCoord},${props.node.yCoord}`);
+        // tell the parent to update
+        props.toggleNode(props.node);
       }}
       className="grid-node"
       style={style}

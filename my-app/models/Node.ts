@@ -1,5 +1,9 @@
 import { Action } from "./Plan";
 
+/**
+ * A type for each node.
+ * Expanded means that the node has had it's neighbours explored.
+ */
 export enum NodeType {
   Normal = "Normal",
   Start = "Start",
@@ -19,6 +23,7 @@ export interface IGridNode {
 }
 
 export class GridNode implements IGridNode {
+  id: string;
   xCoord: number;
   yCoord: number;
   path: [GridNode, Action][];
@@ -39,6 +44,8 @@ export class GridNode implements IGridNode {
     this.type = type;
     this.path = [];
     this.pathNumber = undefined;
+    // expression style from c# props
+    this.id = this.toString();
   }
 
   public toString = () => {
@@ -47,5 +54,13 @@ export class GridNode implements IGridNode {
 
   public equals = (node: GridNode) => {
     return this.xCoord === node.xCoord && this.yCoord === node.yCoord;
+  };
+
+  public toggleType = () => {
+    // if normal, turn into wall
+    if (this.type === NodeType.Normal) {
+      console.log("WALL SET");
+      this.type = NodeType.Wall;
+    }
   };
 }

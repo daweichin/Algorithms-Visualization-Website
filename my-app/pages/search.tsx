@@ -79,6 +79,30 @@ const GridLayout = () => {
     executePlanAnimation(plan);
   };
 
+  // Update one node at a time - intended for animation purposes
+  // TODO: investigate performance, probably not as bad as i think since virtual dom but how to prove this?
+  // wonder if react can be put under pressure either?
+  const updateNode = (node: GridNode, grid: Grid) => {
+    if (node) {
+      grid.nodes = gridNodes;
+      grid.updateNode(node.xCoord, node.yCoord, node);
+      let newGridNodes = [...grid.nodes];
+      setNodes((n) => newGridNodes);
+    }
+  };
+
+  const toggleNodeType = (node: GridNode) => {
+    if (node) {
+      // Update the clicked node
+      grid.toggleNodeType(node.xCoord, node.yCoord, node);
+      // First, get the most up to date state before updating
+      grid.nodes = gridNodes;
+      // Get a new state to replace old state (do not directly modify state)
+      let newGridNodes = [...grid.nodes];
+      setNodes((n) => newGridNodes);
+    }
+  };
+
   const executePlanAnimation = (plan: Plan) => {
     // Once per second, input a new step of the plan
     // Adapted from
@@ -100,9 +124,14 @@ const GridLayout = () => {
             alert("All possible nodes expanded, goal was not found.");
           }
           plan.finalSteps.forEach((s, i) => {
-            s[0].pathNumber = i;
-            s[0].type = NodeType.Path;
-            updateNode(s[0], grid);
+            // immediately setup all the timers
+            setTimeout(() => {
+              console.log("DELAY");
+              console.log(i);
+              s[0].pathNumber = i;
+              s[0].type = NodeType.Path;
+              updateNode(s[0], grid);
+            }, 100 * i);
           });
           break;
         }
@@ -114,28 +143,6 @@ const GridLayout = () => {
         await timer(1000 / animationSpeed);
       }
     })();
-  };
-
-  // Update one node at a time - intended for animation purposes
-  const updateNode = (node: GridNode, grid: Grid) => {
-    if (node) {
-      grid.nodes = gridNodes;
-      grid.updateNode(node.xCoord, node.yCoord, node);
-      let newGridNodes = [...grid.nodes];
-      setNodes((n) => newGridNodes);
-    }
-  };
-
-  const toggleNodeType = (node: GridNode) => {
-    if (node) {
-      // Update the clicked node
-      grid.toggleNodeType(node.xCoord, node.yCoord, node);
-      // First, get the most up to date state before updating
-      grid.nodes = gridNodes;
-      // Get a new state to replace old state (do not directly modify state)
-      let newGridNodes = [...grid.nodes];
-      setNodes((n) => newGridNodes);
-    }
   };
 
   // Look at expanded nodes and shift it

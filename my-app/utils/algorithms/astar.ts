@@ -72,8 +72,6 @@ export const AStarSearch = (
     nodeToExplore.type = NodeType.Expanded;
     expandedNodes.push(nodeToExplore);
 
-    // console.log(childNodes);
-    // debugger;
     let nodesToExplore: [GridNode, Action][] = childNodes.filter((n) => {
       let isNodeUnvisited = grid.isVisited.get(n[0].toString()) === false;
       let isNeighbourAWall = n[0].type === NodeType.Wall;

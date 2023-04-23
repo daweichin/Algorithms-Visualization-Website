@@ -11,6 +11,7 @@ yarn dev
 ```
 
 ## Running Tests
+```npm run test```
 
 
 ## Deploy on Vercel

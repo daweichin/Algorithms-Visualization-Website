@@ -2,42 +2,18 @@ import { Graph } from "./Graph";
 import { GridNode, NodeType } from "./Node";
 import { Action } from "./Plan";
 
-/**
- *  Grid starts at 0,0, in top left corner
- *  Directions represents directions in 2d plane
- *  Reasoning: "To go right, i need to add 1 to the ycoord"
- *  Right = [0, 1]
- *  Left = [0, -1]
- *  Up, = [-1, 0]
- *  Down = [1, 0]
- *
- * @param directionArray
- * @returns
- */
-const DIRECTIONS: Map<Action, number[]> = new Map();
-DIRECTIONS.set(Action.RIGHT, [0, 1]);
-DIRECTIONS.set(Action.LEFT, [0, -1]);
-DIRECTIONS.set(Action.DOWN, [1, 0]);
-DIRECTIONS.set(Action.UP, [-1, 0]);
-
-export interface IGrid extends Graph {
-  gridSize: number;
-  // Map of if a node has been visited before.
-  isVisited: Map<string, boolean>;
-
-  getNeighbours: (node: GridNode) => Array<[GridNode, Action]>;
-}
-
 export class Grid implements IGrid {
   gridSize: number;
   // Represent as a 2-d matrix, eg: nodes[2][1] = 2nd col 1st row = coords of(2,1)
   nodes: GridNode[][];
+  startNode: GridNode;
+  endNode: GridNode;
   // Key for the below is a string, of structure x,y
   // What i need is a valuetype of "Point", but
   isVisited: Map<string, boolean> = new Map<string, boolean>();
   adjListWithAction: Map<string, Array<[GridNode, Action]>>;
 
-  public constructor(gridSize: number) {
+  public constructor(startNode: GridNode, endNode: GridNode, gridSize: number) {
     this.gridSize = gridSize;
     this.nodes = Array.from(Array(gridSize), () => new Array(gridSize));
     for (let i = 0; i < gridSize; i++) {
@@ -47,6 +23,10 @@ export class Grid implements IGrid {
       }
     }
     this.adjListWithAction = this.generateAdjacencyLists();
+    this.startNode = startNode;
+    this.endNode = endNode;
+    this.nodes[startNode.xCoord][startNode.yCoord] = startNode;
+    this.nodes[endNode.xCoord][endNode.yCoord] = endNode;
   }
 
   // If trying to get node (1,2), xCoord should be 1, yCoord should be 2
@@ -55,18 +35,26 @@ export class Grid implements IGrid {
     return this.nodes[xCoord][yCoord];
   }
 
-  public updateNode(xCoord: number, yCoord: number, node: GridNode) {
-    console.log(`UPDATING ${xCoord}, ${yCoord}`);
-    this.nodes[xCoord][yCoord] = node;
+  public updateStartNode(node: GridNode) {
+    // 1.Turn old start to a normal node. TODO: this breaks the app currently, but in theory it should reset the previous node.
+    // The app is handling this right now by handling new node changes == init new grid
+    // 2. Update the new node
+    this.nodes[node.xCoord][node.yCoord] = node;
   }
 
-  public toggleNodeType(xCoord: number, yCoord: number, node: GridNode) {
+  public updateEndNode(node: GridNode) {
+    // 1. Turn old end to a normal node
+    // 2. Update the new node
+    this.nodes[node.xCoord][node.yCoord] = node;
+  }
+
+  public updateNode(node: GridNode) {
+    this.nodes[node.xCoord][node.yCoord] = node;
+  }
+
+  public toggleNodeType(node: GridNode) {
     node.type = NodeType.Wall;
-    this.nodes[xCoord][yCoord] = node;
-  }
-
-  public setNodeType(xCoord: number, yCoord: number, nodeType: NodeType) {
-    this.nodes[xCoord][yCoord].type = nodeType;
+    this.nodes[node.xCoord][node.yCoord] = node;
   }
 
   public generateAdjacencyLists(): Map<string, Array<[GridNode, Action]>> {
@@ -104,4 +92,30 @@ export class Grid implements IGrid {
     // Once a node has it's neighbours explored, it should be considered as expanded.
     return neighbours;
   }
+}
+
+/**
+ *  Grid starts at 0,0, in top left corner
+ *  Directions represents directions in 2d plane
+ *  Reasoning: "To go right, i need to add 1 to the ycoord"
+ *  Right = [0, 1]
+ *  Left = [0, -1]
+ *  Up, = [-1, 0]
+ *  Down = [1, 0]
+ *
+ * @param directionArray
+ * @returns
+ */
+const DIRECTIONS: Map<Action, number[]> = new Map();
+DIRECTIONS.set(Action.RIGHT, [0, 1]);
+DIRECTIONS.set(Action.LEFT, [0, -1]);
+DIRECTIONS.set(Action.DOWN, [1, 0]);
+DIRECTIONS.set(Action.UP, [-1, 0]);
+
+export interface IGrid extends Graph {
+  gridSize: number;
+  // Map of if a node has been visited before.
+  isVisited: Map<string, boolean>;
+
+  getNeighbours: (node: GridNode) => Array<[GridNode, Action]>;
 }

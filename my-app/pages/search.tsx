@@ -28,9 +28,9 @@ const GridLayout = () => {
     new GridNode(0, 0, NodeType.Start)
   );
   const [endNode, setEndNode] = useState<GridNode>(
-    new GridNode(1, 2, NodeType.Goal)
+    new GridNode(7, 7, NodeType.Goal)
   );
-  const gridSize = 4;
+  const gridSize = 16;
   // This grid is a super object... if more layers then best to move to state management or something
   const grid = new Grid(gridSize);
   const [gridNodes, setNodes] = useState<GridNode[][]>(grid.nodes);
@@ -52,10 +52,10 @@ const GridLayout = () => {
     endNode: GridNode
   ): Promise<void> => {
     // this is necessary as the gridNodes state may have been updated, but not the grid itself
-    // this is a hack, TODO: find out best way to do this (eg in vue probably wouldve events or something)
+    // this is a hack, affects all searches,
+    // TODO: make it such that when a node is updated, grid.nodes is also updated too?
     grid.nodes = gridNodes;
     const plan: Plan = await BFSSearch(grid, startNode, endNode);
-    console.log(plan);
     executePlanAnimation(plan);
   };
 
@@ -64,6 +64,7 @@ const GridLayout = () => {
     startNode: GridNode,
     endNode: GridNode
   ): void => {
+    grid.nodes = gridNodes;
     const plan: Plan = DFSSearch(grid, startNode, endNode);
     executePlanAnimation(plan);
   };
@@ -73,6 +74,7 @@ const GridLayout = () => {
     startNode: GridNode,
     endNode: GridNode
   ): void => {
+    grid.nodes = gridNodes;
     const plan: Plan = AStarSearch(grid, startNode, endNode);
     executePlanAnimation(plan);
   };
@@ -88,13 +90,15 @@ const GridLayout = () => {
       while (!isPlanCompleted) {
         // visualization here
 
-        // ISSUE: by the time we get to the first update, lots of nodes have their internal state set as "expanded"
-        //
+        console.log(plan);
         let temp: any = GetAnimationStep(plan).next();
         isPlanCompleted = temp.done;
         // Once the plan is done, visualize the path
         if (isPlanCompleted) {
           console.log("PLAN DONE");
+          if (plan.goalReached === false) {
+            alert("All possible nodes expanded, goal was not found.");
+          }
           plan.finalSteps.forEach((s, i) => {
             s[0].pathNumber = i;
             s[0].type = NodeType.Path;
@@ -124,15 +128,17 @@ const GridLayout = () => {
 
   const toggleNodeType = (node: GridNode) => {
     if (node) {
-      // First, get the most up to date state before updating
-      // SUPER hacky, 100% not the right way props
-      grid.nodes = gridNodes;
+      // Update the clicked node
       grid.toggleNodeType(node.xCoord, node.yCoord, node);
+      // First, get the most up to date state before updating
+      grid.nodes = gridNodes;
+      // Get a new state to replace old state (do not directly modify state)
       let newGridNodes = [...grid.nodes];
       setNodes((n) => newGridNodes);
     }
   };
 
+  // Look at expanded nodes and shift it
   function* GetAnimationStep(plan: Plan) {
     while (plan.expandedNodes.length > 0) {
       let a = plan.expandedNodes.shift();

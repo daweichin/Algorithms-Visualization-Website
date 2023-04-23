@@ -1,3 +1,4 @@
+import { start } from "repl";
 import { Grid } from "../../models/Grid";
 import { GridNode, NodeType } from "../../models/Node";
 import { Action, Plan } from "../../models/Plan";
@@ -40,21 +41,10 @@ export const AStarSearch = (
   // Prevent the start node from being re-visited
   let expandedNodes: GridNode[] = [];
   grid.isVisited.set(startNode.toString(), true);
-  expandedNodes.push(startNode);
 
-  let rootChildren: Array<[GridNode, Action]> = grid.getNeighbours(startNode);
-  rootChildren.forEach((tuple) => {
-    // Include the first node and it shows up in path
-    // tuple[0].path.push([startNode, Action.NONE])
-    const childNode = tuple[0];
-    const action = tuple[1];
-    childNode.path.push([childNode, action]);
-
-    const manHattanDistance = getManhattanDistance(childNode, goalNode);
-    childNode.cost = manHattanDistance;
-
-    priorityQueue.insert(childNode);
-  });
+  const manHattanDistance = getManhattanDistance(startNode, goalNode);
+  startNode.cost = manHattanDistance;
+  priorityQueue.insert(startNode);
 
   // iterative A*
   while (priorityQueue.heap.data.length > 0) {
@@ -66,27 +56,32 @@ export const AStarSearch = (
       break;
     }
 
-    // 2. Mark node as expanded
-    grid.isVisited.set(nodeToExplore.toString(), true);
-    nodeToExplore.type = NodeType.Expanded;
-    expandedNodes.push(nodeToExplore);
-
     // Check if Goal
     if (nodeToExplore.equals(goalNode)) {
-      console.log("GOAL FOUND");
-      console.log(nodeToExplore.path);
-      console.log(expandedNodes);
-      return { finalSteps: nodeToExplore.path, expandedNodes: expandedNodes };
+      expandedNodes.forEach((n) => (n.type = NodeType.Normal));
+
+      return {
+        finalSteps: nodeToExplore.path,
+        expandedNodes: expandedNodes,
+        goalReached: true,
+      };
     }
 
     // 3. Add Unvisited Children to PQ
     let childNodes: [GridNode, Action][] = grid.getNeighbours(nodeToExplore);
-    let unvisitedChildNodes: [GridNode, Action][] = childNodes.filter(
-      (n) => grid.isVisited.get(n[0].toString()) === false
-    );
+    nodeToExplore.type = NodeType.Expanded;
+    expandedNodes.push(nodeToExplore);
+
+    // console.log(childNodes);
+    // debugger;
+    let nodesToExplore: [GridNode, Action][] = childNodes.filter((n) => {
+      let isNodeUnvisited = grid.isVisited.get(n[0].toString()) === false;
+      let isNeighbourAWall = n[0].type === NodeType.Wall;
+      return isNodeUnvisited && !isNeighbourAWall;
+    });
 
     /// find out which node is the smallest and add to the priority queue
-    unvisitedChildNodes.forEach((dirNodeTuple) => {
+    nodesToExplore.forEach((dirNodeTuple) => {
       let newNode = dirNodeTuple[0];
       let action = dirNodeTuple[1];
 
@@ -94,6 +89,8 @@ export const AStarSearch = (
         // only insert the new node if the heuristic is better
         newNode.cost = getManhattanDistance(newNode, goalNode);
         if (newNode.cost <= getManhattanDistance(nodeToExplore, goalNode)) {
+          grid.isVisited.set(newNode.id, true);
+
           newNode.path = [...nodeToExplore.path];
           newNode.path.push([newNode, action]);
           priorityQueue.insert(newNode);
@@ -101,5 +98,10 @@ export const AStarSearch = (
       }
     });
   }
-  return { finalSteps: [], expandedNodes: expandedNodes };
+
+  // TODO: this step should probably be OUTSIDE this function, ie since it's responsible for visualization, it should be in the caller
+  // and not in here.
+  expandedNodes.forEach((n) => (n.type = NodeType.Normal));
+
+  return { finalSteps: [], expandedNodes: expandedNodes, goalReached: false };
 };

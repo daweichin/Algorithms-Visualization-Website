@@ -21,20 +21,17 @@ export const BFSSearch = (
   // Add the startnode to the queue
   queue.push(startNode);
 
-  // let times = 0;
   while (queue.length > 0) {
-    // console.log(times++);
     let currentNode = queue.shift() as GridNode;
-    // console.log("Current Node is " + currentNode.id);
-
     // If the goal is found, return the current path
     if (currentNode.equals(endNode)) {
-      // console.log(currentNode.path);
-      console.log(expandedNodes);
+      // Reset all nodes to normal, for visualization purposes, since
+      // the visualiztion uses the node type
       expandedNodes.forEach((n) => (n.type = NodeType.Normal));
       return {
         finalSteps: currentNode.path,
         expandedNodes: expandedNodes,
+        goalReached: true,
       };
     }
 
@@ -47,7 +44,6 @@ export const BFSSearch = (
     let nodesToExplore: [GridNode, Action][] = childNodes.filter((n) => {
       let isNodeUnvisited = grid.isVisited.get(n[0].toString()) === false;
       let isNeighbourAWall = n[0].type === NodeType.Wall;
-      console.log(isNeighbourAWall);
       return isNodeUnvisited && !isNeighbourAWall;
     });
 
@@ -65,5 +61,11 @@ export const BFSSearch = (
     });
   }
 
-  return { finalSteps: [], expandedNodes: expandedNodes };
+  expandedNodes.forEach((n) => (n.type = NodeType.Normal));
+
+  return {
+    finalSteps: [],
+    expandedNodes: expandedNodes,
+    goalReached: false,
+  };
 };
